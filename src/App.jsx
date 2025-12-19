@@ -57,18 +57,47 @@ function App() {
 
   const sampleResponse = {
     ip: "37.32.126.245",
+    source: "IP2Location",
     country: "Iran",
     countryCode: "IR",
     region: "Tehran",
-    regionCode: "23",
     city: "Tehran",
-    postalCode: "",
+    isp: "Noyan Abr Arvan Co. ( Private Joint Stock)",
     latitude: 35.6944,
     longitude: 51.4215,
-    timezone: "Asia/Tehran",
-    isp: "Noyan Abr Arvan Co. ( Private Joint Stock)",
-    organization: "ArvanCloud Global Technologies Inc.",
-    asName: "AS202468 Noyan Abr Arvan Co. ( Private Joint Stock)"
+    domain: "arvancloud.com",
+    zipCode: "",
+    timeZone: "Asia/Tehran",
+    netspeed: "T1",
+    iddCode: "98",
+    areaCode: "",
+    weatherStationCode: "",
+    weatherStationName: "",
+    mcc: "",
+    mnc: "",
+    mobileBrand: "",
+    elevation: "",
+    usageType: "DCH",
+    attribution: "This site or product includes IP2Location LITE data available from https://lite.ip2location.com"
+  };
+
+  const sampleProxyResponse = {
+    ip: "192.168.1.1",
+    source: "IP2Proxy",
+    proxyType: "VPN",
+    country: "United States",
+    countryCode: "US",
+    region: "California",
+    city: "Los Angeles",
+    isp: "Example ISP",
+    domain: "example.com",
+    usageType: "VPN",
+    asn: "12345",
+    as: "AS12345 Example AS",
+    lastSeen: "30",
+    threat: "LOW",
+    provider: "Example VPN Provider",
+    attribution: "This site or product includes IP2Proxy LITE data available from https://lite.ip2location.com"
   };
 
   return (
@@ -149,6 +178,11 @@ function App() {
                 <div className="ip-header">
                   <div className="ip-display" dir="ltr">{ipData.ip}</div>
                   <div className="ip-label">آدرس IP</div>
+                  {ipData.source && (
+                    <div className="source-badge">
+                      منبع: {ipData.source === 'IP2Proxy' ? 'پروکسی' : 'موقعیت'}
+                    </div>
+                  )}
                 </div>
                 
                 <div className="ip-info-grid">
@@ -177,33 +211,8 @@ function App() {
                   </div>
                   
                   <div className="info-item">
-                    <span className="info-label">🔖 کد منطقه</span>
-                    <span className="info-value highlight" dir="ltr">{ipData.regionCode || 'نامشخص'}</span>
-                  </div>
-                  
-                  <div className="info-item">
                     <span className="info-label">🏙️ شهر</span>
                     <span className="info-value">{ipData.city || 'نامشخص'}</span>
-                  </div>
-                  
-                  <div className="info-item">
-                    <span className="info-label">📮 کد پستی</span>
-                    <span className="info-value" dir="ltr">{ipData.postalCode || 'نامشخص'}</span>
-                  </div>
-                  
-                  <div className="info-item">
-                    <span className="info-label">📐 عرض جغرافیایی</span>
-                    <span className="info-value highlight" dir="ltr">{ipData.latitude || 'نامشخص'}</span>
-                  </div>
-                  
-                  <div className="info-item">
-                    <span className="info-label">📐 طول جغرافیایی</span>
-                    <span className="info-value highlight" dir="ltr">{ipData.longitude || 'نامشخص'}</span>
-                  </div>
-                  
-                  <div className="info-item">
-                    <span className="info-label">🕐 منطقه زمانی</span>
-                    <span className="info-value" dir="ltr">{ipData.timezone || 'نامشخص'}</span>
                   </div>
                   
                   <div className="info-item">
@@ -211,15 +220,78 @@ function App() {
                     <span className="info-value highlight" dir="ltr">{ipData.isp || 'نامشخص'}</span>
                   </div>
                   
-                  <div className="info-item">
-                    <span className="info-label">🏢 سازمان</span>
-                    <span className="info-value" dir="ltr">{ipData.organization || 'نامشخص'}</span>
-                  </div>
+                  {ipData.source === 'IP2Proxy' && (
+                    <>
+                      <div className="info-item">
+                        <span className="info-label">🛡️ نوع پروکسی</span>
+                        <span className="info-value highlight">{ipData.proxyType || 'نامشخص'}</span>
+                      </div>
+                      
+                      <div className="info-item">
+                        <span className="info-label">⚠️ تهدید</span>
+                        <span className="info-value highlight">{ipData.threat || 'نامشخص'}</span>
+                      </div>
+                      
+                      <div className="info-item">
+                        <span className="info-label">🏢 ارائه‌دهنده</span>
+                        <span className="info-value">{ipData.provider || 'نامشخص'}</span>
+                      </div>
+                      
+                      <div className="info-item">
+                        <span className="info-label">🔗 ASN</span>
+                        <span className="info-value highlight" dir="ltr">{ipData.asn || 'نامشخص'}</span>
+                      </div>
+                      
+                      <div className="info-item">
+                        <span className="info-label">📊 AS</span>
+                        <span className="info-value" dir="ltr">{ipData.as || 'نامشخص'}</span>
+                      </div>
+                      
+                      <div className="info-item">
+                        <span className="info-label">🕐 آخرین مشاهده</span>
+                        <span className="info-value" dir="ltr">{ipData.lastSeen || 'نامشخص'}</span>
+                      </div>
+                    </>
+                  )}
                   
-                  <div className="info-item">
-                    <span className="info-label">🔗 نام AS</span>
-                    <span className="info-value highlight" dir="ltr">{ipData.asName || 'نامشخص'}</span>
-                  </div>
+                  {ipData.source === 'IP2Location' && (
+                    <>
+                      <div className="info-item">
+                        <span className="info-label">📐 عرض جغرافیایی</span>
+                        <span className="info-value highlight" dir="ltr">{ipData.latitude || 'نامشخص'}</span>
+                      </div>
+                      
+                      <div className="info-item">
+                        <span className="info-label">📐 طول جغرافیایی</span>
+                        <span className="info-value highlight" dir="ltr">{ipData.longitude || 'نامشخص'}</span>
+                      </div>
+                      
+                      <div className="info-item">
+                        <span className="info-label">🕐 منطقه زمانی</span>
+                        <span className="info-value" dir="ltr">{ipData.timeZone || 'نامشخص'}</span>
+                      </div>
+                      
+                      <div className="info-item">
+                        <span className="info-label">📮 کد پستی</span>
+                        <span className="info-value" dir="ltr">{ipData.zipCode || 'نامشخص'}</span>
+                      </div>
+                      
+                      <div className="info-item">
+                        <span className="info-label">🌐 سرعت شبکه</span>
+                        <span className="info-value">{ipData.netspeed || 'نامشخص'}</span>
+                      </div>
+                      
+                      <div className="info-item">
+                        <span className="info-label">📞 کد IDD</span>
+                        <span className="info-value highlight" dir="ltr">{ipData.iddCode || 'نامشخص'}</span>
+                      </div>
+                      
+                      <div className="info-item">
+                        <span className="info-label">🏢 نوع استفاده</span>
+                        <span className="info-value">{ipData.usageType || 'نامشخص'}</span>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             )}
@@ -273,10 +345,16 @@ function App() {
                 </div>
                 <div className="endpoint-body">
                   <p className="endpoint-desc">
-                    نمونه پاسخ JSON از API (خروجی به انگلیسی است):
+                    نمونه پاسخ JSON از API برای IP معمولی (خروجی به انگلیسی است):
                   </p>
                   <div className="code-block">
                     <pre dir="ltr">{JSON.stringify(sampleResponse, null, 2)}</pre>
+                  </div>
+                  <p className="endpoint-desc" style={{ marginTop: '1rem' }}>
+                    نمونه پاسخ JSON از API برای IP پروکسی:
+                  </p>
+                  <div className="code-block">
+                    <pre dir="ltr">{JSON.stringify(sampleProxyResponse, null, 2)}</pre>
                   </div>
                 </div>
               </div>
@@ -289,6 +367,10 @@ function App() {
                 </div>
                 <div className="endpoint-body">
                   <div className="ip-info-grid" style={{ background: 'transparent', gap: '0' }}>
+                    <div className="info-item">
+                      <span className="info-label" dir="ltr">source</span>
+                      <span className="info-value">منبع داده (IP2Proxy یا IP2Location)</span>
+                    </div>
                     <div className="info-item">
                       <span className="info-label" dir="ltr">ip</span>
                       <span className="info-value">آدرس IP</span>
@@ -306,40 +388,100 @@ function App() {
                       <span className="info-value">نام منطقه/استان</span>
                     </div>
                     <div className="info-item">
-                      <span className="info-label" dir="ltr">regionCode</span>
-                      <span className="info-value">کد منطقه</span>
-                    </div>
-                    <div className="info-item">
                       <span className="info-label" dir="ltr">city</span>
                       <span className="info-value">نام شهر</span>
-                    </div>
-                    <div className="info-item">
-                      <span className="info-label" dir="ltr">postalCode</span>
-                      <span className="info-value">کد پستی</span>
-                    </div>
-                    <div className="info-item">
-                      <span className="info-label" dir="ltr">latitude</span>
-                      <span className="info-value">عرض جغرافیایی</span>
-                    </div>
-                    <div className="info-item">
-                      <span className="info-label" dir="ltr">longitude</span>
-                      <span className="info-value">طول جغرافیایی</span>
-                    </div>
-                    <div className="info-item">
-                      <span className="info-label" dir="ltr">timezone</span>
-                      <span className="info-value">منطقه زمانی (IANA)</span>
                     </div>
                     <div className="info-item">
                       <span className="info-label" dir="ltr">isp</span>
                       <span className="info-value">ارائه‌دهنده اینترنت</span>
                     </div>
                     <div className="info-item">
-                      <span className="info-label" dir="ltr">organization</span>
-                      <span className="info-value">نام سازمان</span>
+                      <span className="info-label" dir="ltr">domain</span>
+                      <span className="info-value">دامنه</span>
                     </div>
                     <div className="info-item">
-                      <span className="info-label" dir="ltr">asName</span>
-                      <span className="info-value">نام سیستم خودمختار</span>
+                      <span className="info-label" dir="ltr">usageType</span>
+                      <span className="info-value">نوع استفاده</span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label" dir="ltr">latitude</span>
+                      <span className="info-value">عرض جغرافیایی (IP2Location)</span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label" dir="ltr">longitude</span>
+                      <span className="info-value">طول جغرافیایی (IP2Location)</span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label" dir="ltr">timeZone</span>
+                      <span className="info-value">منطقه زمانی (IP2Location)</span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label" dir="ltr">zipCode</span>
+                      <span className="info-value">کد پستی (IP2Location)</span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label" dir="ltr">netspeed</span>
+                      <span className="info-value">سرعت شبکه (IP2Location)</span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label" dir="ltr">iddCode</span>
+                      <span className="info-value">کد IDD (IP2Location)</span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label" dir="ltr">areaCode</span>
+                      <span className="info-value">کد منطقه (IP2Location)</span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label" dir="ltr">weatherStationCode</span>
+                      <span className="info-value">کد ایستگاه هواشناسی (IP2Location)</span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label" dir="ltr">weatherStationName</span>
+                      <span className="info-value">نام ایستگاه هواشناسی (IP2Location)</span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label" dir="ltr">mcc</span>
+                      <span className="info-value">کد کشور موبایل (IP2Location)</span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label" dir="ltr">mnc</span>
+                      <span className="info-value">کد شبکه موبایل (IP2Location)</span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label" dir="ltr">mobileBrand</span>
+                      <span className="info-value">برند موبایل (IP2Location)</span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label" dir="ltr">elevation</span>
+                      <span className="info-value">ارتفاع (IP2Location)</span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label" dir="ltr">proxyType</span>
+                      <span className="info-value">نوع پروکسی (IP2Proxy)</span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label" dir="ltr">asn</span>
+                      <span className="info-value">شماره سیستم خودمختار (IP2Proxy)</span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label" dir="ltr">as</span>
+                      <span className="info-value">نام AS (IP2Proxy)</span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label" dir="ltr">lastSeen</span>
+                      <span className="info-value">آخرین مشاهده (IP2Proxy)</span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label" dir="ltr">threat</span>
+                      <span className="info-value">سطح تهدید (IP2Proxy)</span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label" dir="ltr">provider</span>
+                      <span className="info-value">ارائه‌دهنده (IP2Proxy)</span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label" dir="ltr">attribution</span>
+                      <span className="info-value">اطلاعات انتساب</span>
                     </div>
                   </div>
                 </div>
