@@ -195,9 +195,29 @@
 
 .ip-info-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1px;
   background: var(--border-color);
+}
+
+.source-badge {
+  margin-top: 1rem;
+  padding: 0.4rem 1rem;
+  background: rgba(0, 255, 127, 0.1);
+  border: 1px solid rgba(0, 255, 127, 0.2);
+  border-radius: 20px;
+  display: inline-block;
+}
+
+.source-label {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.source-value {
+  color: var(--accent-green);
+  font-size: 0.85rem;
+  font-weight: 600;
 }
 
 .info-item {

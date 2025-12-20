@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 
-const API_BASE = '';
+const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:3001'
+  : '';
 
-// Get current site URL for API documentation
-const getSiteUrl = () => {
-  if (typeof window !== 'undefined') {
-    return window.location.origin;
-  }
-  return 'https://your-domain.com';
+// Get current backend URL for API documentation
+const getBackendUrl = () => {
+  return API_BASE || window.location.origin;
 };
 
 function App() {
@@ -22,10 +21,10 @@ function App() {
     setLoading(true);
     setError(null);
     try {
-      const url = ip ? `${API_BASE}/api/ip/${ip}` : `${API_BASE}/api/ip`;
+      const url = ip ? `${API_BASE}/ip/${ip}` : `${API_BASE}/ip`;
       const response = await fetch(url);
       const data = await response.json();
-      
+
       if (data.error) {
         setError(data.error);
         setIpData(null);
@@ -55,20 +54,16 @@ function App() {
     return `https://flagcdn.com/24x18/${countryCode.toLowerCase()}.png`;
   };
 
-  const sampleResponse = {
-    ip: "37.32.126.245",
-    country: "Iran",
-    countryCode: "IR",
-    region: "Tehran",
-    regionCode: "23",
-    city: "Tehran",
-    postalCode: "",
-    latitude: 35.6944,
-    longitude: 51.4215,
-    timezone: "Asia/Tehran",
-    isp: "Noyan Abr Arvan Co. ( Private Joint Stock)",
-    organization: "ArvanCloud Global Technologies Inc.",
-    asName: "AS202468 Noyan Abr Arvan Co. ( Private Joint Stock)"
+  const renderInfoItem = (label, value, isHighlight = false) => {
+    if (value === undefined || value === null || value === '' || value === 'Unknown' || value === 0) return null;
+    return (
+      <div className="info-item">
+        <span className="info-label">{label}</span>
+        <span className={`info-value ${isHighlight ? 'highlight' : ''}`} dir={typeof value === 'string' && /[a-zA-Z]/.test(value) ? 'ltr' : 'rtl'}>
+          {value}
+        </span>
+      </div>
+    );
   };
 
   return (
@@ -81,19 +76,28 @@ function App() {
             RezvanGate
           </a>
           <nav className="nav">
-            <a 
-              href="#home" 
+            <a
+              href="#home"
               className={`nav-link ${activeTab === 'home' ? 'active' : ''}`}
               onClick={(e) => { e.preventDefault(); setActiveTab('home'); }}
             >
               خانه
             </a>
-            <a 
-              href="#api" 
+            <a
+              href="#api"
               className={`nav-link ${activeTab === 'api' ? 'active' : ''}`}
               onClick={(e) => { e.preventDefault(); setActiveTab('api'); }}
             >
               مستندات API
+            </a>
+            <a
+              href={`${getBackendUrl()}/docs`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="nav-link"
+              style={{ color: 'var(--accent-green)' }}
+            >
+              Swagger (OAS)
             </a>
           </nav>
         </div>
@@ -159,84 +163,57 @@ function App() {
                       <span className="ip-secondary-value">{ipData.ipv6}</span>
                     </div>
                   )}
-                  {ipData.ipType === 'IPv6' && !ipData.ipv6 && (
-                    <div className="ip-secondary" dir="ltr">
-                      <span className="ip-secondary-label">نوع: </span>
-                      <span className="ip-secondary-value">IPv6</span>
+                  {ipData.source && (
+                    <div className="source-badge">
+                      <span className="source-label">منبع: </span>
+                      <span className="source-value">{ipData.source}</span>
                     </div>
                   )}
                 </div>
-                
+
                 <div className="ip-info-grid">
-                  <div className="info-item">
-                    <span className="info-label">🌍 کشور</span>
-                    <span className="info-value">
-                      {ipData.countryCode && (
-                        <img 
-                          src={getCountryFlag(ipData.countryCode)} 
-                          alt={ipData.country} 
-                          className="flag-icon"
-                        />
-                      )}
-                      {ipData.country || 'نامشخص'}
+                  {renderInfoItem("🌍 کشور", ipData.countryCode ? (
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <img
+                        src={getCountryFlag(ipData.countryCode)}
+                        alt={ipData.country}
+                        className="flag-icon"
+                      />
+                      {ipData.country}
                     </span>
-                  </div>
-                  
-                  <div className="info-item">
-                    <span className="info-label">🏷️ کد کشور</span>
-                    <span className="info-value highlight" dir="ltr">{ipData.countryCode || 'نامشخص'}</span>
-                  </div>
-                  
-                  <div className="info-item">
-                    <span className="info-label">📍 منطقه</span>
-                    <span className="info-value">{ipData.region || 'نامشخص'}</span>
-                  </div>
-                  
-                  <div className="info-item">
-                    <span className="info-label">🔖 کد منطقه</span>
-                    <span className="info-value highlight" dir="ltr">{ipData.regionCode || 'نامشخص'}</span>
-                  </div>
-                  
-                  <div className="info-item">
-                    <span className="info-label">🏙️ شهر</span>
-                    <span className="info-value">{ipData.city || 'نامشخص'}</span>
-                  </div>
-                  
-                  <div className="info-item">
-                    <span className="info-label">📮 کد پستی</span>
-                    <span className="info-value" dir="ltr">{ipData.postalCode || 'نامشخص'}</span>
-                  </div>
-                  
-                  <div className="info-item">
-                    <span className="info-label">📐 عرض جغرافیایی</span>
-                    <span className="info-value highlight" dir="ltr">{ipData.latitude || 'نامشخص'}</span>
-                  </div>
-                  
-                  <div className="info-item">
-                    <span className="info-label">📐 طول جغرافیایی</span>
-                    <span className="info-value highlight" dir="ltr">{ipData.longitude || 'نامشخص'}</span>
-                  </div>
-                  
-                  <div className="info-item">
-                    <span className="info-label">🕐 منطقه زمانی</span>
-                    <span className="info-value" dir="ltr">{ipData.timezone || 'نامشخص'}</span>
-                  </div>
-                  
-                  <div className="info-item">
-                    <span className="info-label">🌐 ISP</span>
-                    <span className="info-value highlight" dir="ltr">{ipData.isp || 'نامشخص'}</span>
-                  </div>
-                  
-                  <div className="info-item">
-                    <span className="info-label">🏢 سازمان</span>
-                    <span className="info-value" dir="ltr">{ipData.organization || 'نامشخص'}</span>
-                  </div>
-                  
-                  <div className="info-item">
-                    <span className="info-label">🔗 نام AS</span>
-                    <span className="info-value highlight" dir="ltr">{ipData.asName || 'نامشخص'}</span>
-                  </div>
+                  ) : ipData.country)}
+
+                  {renderInfoItem("🏷️ کد کشور", ipData.countryCode, true)}
+                  {renderInfoItem("📍 منطقه", ipData.region)}
+                  {renderInfoItem("🏙️ شهر", ipData.city)}
+                  {renderInfoItem("🌐 ISP", ipData.isp, true)}
+                  {renderInfoItem("🏢 سازمان", ipData.organization)}
+                  {renderInfoItem("📊 AS", ipData.asName || ipData.as)}
+                  {renderInfoItem("🔗 ASN", ipData.asn, true)}
+
+                  {/* IP2Proxy specific */}
+                  {renderInfoItem("🛡️ نوع پروکسی", ipData.proxyType, true)}
+                  {renderInfoItem("⚠️ تهدید", ipData.threat, true)}
+                  {renderInfoItem("🏢 ارائه‌دهنده", ipData.provider)}
+                  {renderInfoItem("🕐 آخرین مشاهده", ipData.lastSeen)}
+
+                  {/* IP2Location specific */}
+                  {renderInfoItem("📐 عرض جغرافیایی", ipData.latitude, true)}
+                  {renderInfoItem("📐 طول جغرافیایی", ipData.longitude, true)}
+                  {renderInfoItem("🕐 منطقه زمانی", ipData.timezone || ipData.timeZone)}
+                  {renderInfoItem("📮 کد پستی", ipData.postalCode || ipData.zipCode)}
+                  {renderInfoItem("🌐 سرعت شبکه", ipData.netspeed)}
+                  {renderInfoItem("📞 کد IDD", ipData.iddCode, true)}
+                  {renderInfoItem("🏢 نوع استفاده", ipData.usageType)}
+                  {renderInfoItem("🏔️ ارتفاع", ipData.elevation)}
+                  {renderInfoItem("🌦️ ایستگاه", ipData.weatherStationName)}
                 </div>
+
+                {ipData.attribution && (
+                  <div className="attribution" style={{ marginTop: '20px', fontSize: '0.8rem', opacity: 0.7, textAlign: 'center' }}>
+                    {ipData.attribution}
+                  </div>
+                )}
               </div>
             )}
           </>
@@ -247,36 +224,116 @@ function App() {
             <h2 className="section-title">
               <span>⚡</span> مستندات API
             </h2>
-            
+
+            <p className="api-intro" style={{ marginBottom: '1.5rem', opacity: 0.8 }}>
+              سرویس RezvanGate یک API پیشرفته برای Geolocation و شناسایی پروکسی است. پاسخ‌ها به فرمت JSON و شامل اطلاعات ادغام شده از پایگاه داده‌های MaxMind و IP2Location هستند.
+            </p>
+
+            <div style={{ marginBottom: '2.5rem', textAlign: 'center' }}>
+              <a
+                href={`${getBackendUrl()}/docs`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="search-btn"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  textDecoration: 'none',
+                  padding: '12px 24px',
+                  fontSize: '1rem'
+                }}
+              >
+                📚 مشاهده مستندات تعاملی Swagger (OpenAPI)
+              </a>
+            </div>
+
             <div className="api-endpoints">
-              {/* Endpoint 1 */}
+              {/* Endpoint 1: Current IP */}
               <div className="api-endpoint">
                 <div className="endpoint-header">
                   <span className="method">GET</span>
-                  <span className="endpoint-url" dir="ltr">/api/ip</span>
+                  <span className="endpoint-url" dir="ltr">/ip</span>
                 </div>
                 <div className="endpoint-body">
                   <p className="endpoint-desc">
                     اطلاعات آدرس IP فعلی شما را برمی‌گرداند.
                   </p>
                   <div className="code-block">
-                    <pre dir="ltr">{`curl ${getSiteUrl()}/api/ip`}</pre>
+                    <pre dir="ltr">{`curl ${getBackendUrl()}/ip`}</pre>
                   </div>
                 </div>
               </div>
 
-              {/* Endpoint 2 */}
+              {/* Endpoint 2: Specific IP */}
               <div className="api-endpoint">
                 <div className="endpoint-header">
                   <span className="method">GET</span>
-                  <span className="endpoint-url" dir="ltr">/api/ip/:ip</span>
+                  <span className="endpoint-url" dir="ltr">/ip/:ip</span>
                 </div>
                 <div className="endpoint-body">
                   <p className="endpoint-desc">
                     اطلاعات یک آدرس IP خاص را برمی‌گرداند.
                   </p>
                   <div className="code-block">
-                    <pre dir="ltr">{`curl ${getSiteUrl()}/api/ip/37.32.126.245`}</pre>
+                    <pre dir="ltr">{`curl ${getBackendUrl()}/ip/8.8.8.8`}</pre>
+                  </div>
+                </div>
+              </div>
+
+              {/* Endpoint 3: Health */}
+              <div className="api-endpoint">
+                <div className="endpoint-header">
+                  <span className="method">GET</span>
+                  <span className="endpoint-url" dir="ltr">/health</span>
+                </div>
+                <div className="endpoint-body">
+                  <p className="endpoint-desc">
+                    بررسی وضعیت سلامت سرویس.
+                  </p>
+                </div>
+              </div>
+
+              {/* Endpoint 4: Info */}
+              <div className="api-endpoint">
+                <div className="endpoint-header">
+                  <span className="method">GET</span>
+                  <span className="endpoint-url" dir="ltr">/info</span>
+                </div>
+                <div className="endpoint-body">
+                  <p className="endpoint-desc">
+                    اطلاعات نسخه API و دیتابیس‌های مورد استفاده.
+                  </p>
+                </div>
+              </div>
+
+              {/* Models Section */}
+              <div className="api-endpoint" style={{ border: '1px solid var(--accent-green-glow)' }}>
+                <div className="endpoint-header" style={{ background: 'var(--accent-green-glow)' }}>
+                  <span className="method" style={{ background: 'var(--accent-green)' }}>MODEL</span>
+                  <span className="endpoint-url">ساختار پاسخ (IPInfo)</span>
+                </div>
+                <div className="endpoint-body">
+                  <div className="ip-info-grid" style={{ background: 'transparent', gap: '8px' }}>
+                    {[
+                      { field: 'ip', desc: 'آدرس IP' },
+                      { field: 'ipType', desc: 'نوع (IPv4/IPv6)' },
+                      { field: 'country', desc: 'نام کشور' },
+                      { field: 'countryCode', desc: 'کد کشور (ISO)' },
+                      { field: 'isp', desc: 'ارائه‌دهنده اینترنت' },
+                      { field: 'asn', desc: 'شماره AS' },
+                      { field: 'latitude', desc: 'عرض جغرافیایی' },
+                      { field: 'longitude', desc: 'طول جغرافیایی' },
+                      { field: 'timezone', desc: 'منطقه زمانی' },
+                      { field: 'proxyType', desc: 'نوع پروکسی (در صورت وجود)' },
+                      { field: 'threat', desc: 'سطح تهدید' },
+                      { field: 'source', desc: 'منبع داده‌های استفاده شده' }
+                    ].map(item => (
+                      <div key={item.field} className="info-item" style={{ padding: '0.5rem 1rem', borderRadius: '4px' }}>
+                        <span className="info-label" dir="ltr" style={{ fontSize: '0.85rem' }}>{item.field}</span>
+                        <span className="info-value" style={{ fontSize: '0.85rem' }}>{item.desc}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -285,78 +342,23 @@ function App() {
               <div className="api-endpoint">
                 <div className="endpoint-header">
                   <span className="method">JSON</span>
-                  <span className="endpoint-url">نمونه پاسخ</span>
+                  <span className="endpoint-url">نمونه پاسخ واقعی</span>
                 </div>
                 <div className="endpoint-body">
-                  <p className="endpoint-desc">
-                    نمونه پاسخ JSON از API (خروجی به انگلیسی است):
-                  </p>
                   <div className="code-block">
-                    <pre dir="ltr">{JSON.stringify(sampleResponse, null, 2)}</pre>
-                  </div>
-                </div>
-              </div>
-
-              {/* Response Fields */}
-              <div className="api-endpoint">
-                <div className="endpoint-header">
-                  <span className="method">INFO</span>
-                  <span className="endpoint-url">فیلدهای پاسخ</span>
-                </div>
-                <div className="endpoint-body">
-                  <div className="ip-info-grid" style={{ background: 'transparent', gap: '0' }}>
-                    <div className="info-item">
-                      <span className="info-label" dir="ltr">ip</span>
-                      <span className="info-value">آدرس IP</span>
-                    </div>
-                    <div className="info-item">
-                      <span className="info-label" dir="ltr">country</span>
-                      <span className="info-value">نام کشور</span>
-                    </div>
-                    <div className="info-item">
-                      <span className="info-label" dir="ltr">countryCode</span>
-                      <span className="info-value">کد ISO کشور</span>
-                    </div>
-                    <div className="info-item">
-                      <span className="info-label" dir="ltr">region</span>
-                      <span className="info-value">نام منطقه/استان</span>
-                    </div>
-                    <div className="info-item">
-                      <span className="info-label" dir="ltr">regionCode</span>
-                      <span className="info-value">کد منطقه</span>
-                    </div>
-                    <div className="info-item">
-                      <span className="info-label" dir="ltr">city</span>
-                      <span className="info-value">نام شهر</span>
-                    </div>
-                    <div className="info-item">
-                      <span className="info-label" dir="ltr">postalCode</span>
-                      <span className="info-value">کد پستی</span>
-                    </div>
-                    <div className="info-item">
-                      <span className="info-label" dir="ltr">latitude</span>
-                      <span className="info-value">عرض جغرافیایی</span>
-                    </div>
-                    <div className="info-item">
-                      <span className="info-label" dir="ltr">longitude</span>
-                      <span className="info-value">طول جغرافیایی</span>
-                    </div>
-                    <div className="info-item">
-                      <span className="info-label" dir="ltr">timezone</span>
-                      <span className="info-value">منطقه زمانی (IANA)</span>
-                    </div>
-                    <div className="info-item">
-                      <span className="info-label" dir="ltr">isp</span>
-                      <span className="info-value">ارائه‌دهنده اینترنت</span>
-                    </div>
-                    <div className="info-item">
-                      <span className="info-label" dir="ltr">organization</span>
-                      <span className="info-value">نام سازمان</span>
-                    </div>
-                    <div className="info-item">
-                      <span className="info-label" dir="ltr">asName</span>
-                      <span className="info-value">نام سیستم خودمختار</span>
-                    </div>
+                    <pre dir="ltr">{JSON.stringify({
+                      "ip": "8.8.8.8",
+                      "ipType": "IPv4",
+                      "country": "United States",
+                      "countryCode": "US",
+                      "isp": "GOOGLE",
+                      "asn": 15169,
+                      "latitude": 37.751,
+                      "longitude": -97.822,
+                      "timezone": "America/Chicago",
+                      "source": "MaxMind + AS + IP2Location",
+                      "attribution": "Contains data from MaxMind GeoLite2, IP2Location LITE, and IP2Proxy LITE."
+                    }, null, 2)}</pre>
                   </div>
                 </div>
               </div>

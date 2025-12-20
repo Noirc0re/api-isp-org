@@ -35,3 +35,21 @@ body {
   flex-direction: column;
 }
 
+.source-badge {
+  background: var(--accent-green-glow);
+  color: var(--accent-green);
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid var(--accent-green);
+  margin-top: 0.5rem;
+}
+
+.ip-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
