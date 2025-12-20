@@ -217,18 +217,25 @@ function App() {
               <span>⚡</span> مستندات API
             </h2>
 
+            <p className="api-intro" style={{ marginBottom: '2rem', opacity: 0.8 }}>
+              سرویس RezvanGate از هر دو سبک آدرس‌دهی (جدید و قدیمی) پشتیبانی می‌کند. پاسخ‌ها شامل اطلاعات ادغام شده از چندین پایگاه داده هستند.
+            </p>
+
             <div className="api-endpoints">
               <div className="api-endpoint">
                 <div className="endpoint-header">
                   <span className="method">GET</span>
-                  <span className="endpoint-url" dir="ltr">/api/ip</span>
+                  <div className="endpoint-urls" style={{ display: 'flex', gap: '1rem' }}>
+                    <span className="endpoint-url" dir="ltr">/ip</span>
+                    <span className="endpoint-url" dir="ltr">/api/ip</span>
+                  </div>
                 </div>
                 <div className="endpoint-body">
                   <p className="endpoint-desc">
                     اطلاعات آدرس IP فعلی شما را برمی‌گرداند.
                   </p>
                   <div className="code-block">
-                    <pre dir="ltr">{`curl ${getSiteUrl()}/api/ip`}</pre>
+                    <pre dir="ltr">{`curl ${getSiteUrl()}/ip`}</pre>
                   </div>
                 </div>
               </div>
@@ -236,15 +243,33 @@ function App() {
               <div className="api-endpoint">
                 <div className="endpoint-header">
                   <span className="method">GET</span>
-                  <span className="endpoint-url" dir="ltr">/api/ip/:ip</span>
+                  <div className="endpoint-urls" style={{ display: 'flex', gap: '1rem' }}>
+                    <span className="endpoint-url" dir="ltr">/ip/:ip</span>
+                    <span className="endpoint-url" dir="ltr">/api/ip/:ip</span>
+                  </div>
                 </div>
                 <div className="endpoint-body">
                   <p className="endpoint-desc">
                     اطلاعات یک آدرس IP خاص را برمی‌گرداند.
                   </p>
                   <div className="code-block">
-                    <pre dir="ltr">{`curl ${getSiteUrl()}/api/ip/8.8.8.8`}</pre>
+                    <pre dir="ltr">{`curl ${getSiteUrl()}/ip/8.8.8.8`}</pre>
                   </div>
+                </div>
+              </div>
+
+              <div className="api-endpoint">
+                <div className="endpoint-header">
+                  <span className="method">GET</span>
+                  <div className="endpoint-urls" style={{ display: 'flex', gap: '1rem' }}>
+                    <span className="endpoint-url" dir="ltr">/info</span>
+                    <span className="endpoint-url" dir="ltr">/health</span>
+                  </div>
+                </div>
+                <div className="endpoint-body">
+                  <p className="endpoint-desc">
+                    اطلاعات سیستم و وضعیت سلامت API را برمی‌گرداند.
+                  </p>
                 </div>
               </div>
             </div>
