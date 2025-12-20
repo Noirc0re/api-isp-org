@@ -484,7 +484,8 @@ async function start() {
   await initDatabases();
   app.listen(PORT, () => {
     console.log(`\n🚀 Merged API Server running on http://localhost:${PORT}`);
-    console.log(`📡 Endpoints: /ip, /ip/:ip, /api/ip, /api/ip/:ip`);
+    console.log(`📡 Endpoints: /ip, /ip/:ip, /health, /info`);
+    console.log(`📚 Swagger UI: http://localhost:${PORT}/docs`);
   });
 }
 
