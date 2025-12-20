@@ -327,6 +327,85 @@ const handleSpecificIP = (req, res) => {
 
 /**
  * @openapi
+ * components:
+ *   schemas:
+ *     IPInfo:
+ *       type: object
+ *       properties:
+ *         ip:
+ *           type: string
+ *         ipType:
+ *           type: string
+ *         ipv4:
+ *           type: string
+ *         ipv6:
+ *           type: string
+ *         country:
+ *           type: string
+ *         countryCode:
+ *           type: string
+ *         region:
+ *           type: string
+ *         city:
+ *           type: string
+ *         isp:
+ *           type: string
+ *         organization:
+ *           type: string
+ *         asn:
+ *           type: integer
+ *         asName:
+ *           type: string
+ *         latitude:
+ *           type: number
+ *         longitude:
+ *           type: number
+ *         timezone:
+ *           type: string
+ *         postalCode:
+ *           type: string
+ *         domain:
+ *           type: string
+ *         usageType:
+ *           type: string
+ *         netspeed:
+ *           type: string
+ *         proxyType:
+ *           type: string
+ *         threat:
+ *           type: string
+ *         provider:
+ *           type: string
+ *         lastSeen:
+ *           type: string
+ *         source:
+ *           type: string
+ *         attribution:
+ *           type: string
+ *     Health:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: string
+ *         timestamp:
+ *           type: string
+ *     Info:
+ *       type: object
+ *       properties:
+ *         version:
+ *           type: string
+ *         databases:
+ *           type: array
+ *           items:
+ *             type: string
+ *         supportedTypes:
+ *           type: array
+ *           items:
+ *             type: string
+ */
+
+/**
+ * @openapi
  * /ip:
  *   get:
  *     summary: Get information about your own IP address
@@ -334,6 +413,10 @@ const handleSpecificIP = (req, res) => {
  *     responses:
  *       200:
  *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/IPInfo'
  */
 app.get('/ip', handleCurrentIP);
 
@@ -353,6 +436,10 @@ app.get('/ip', handleCurrentIP);
  *     responses:
  *       200:
  *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/IPInfo'
  */
 app.get('/ip/:ip', handleSpecificIP);
 
@@ -365,6 +452,10 @@ app.get('/ip/:ip', handleSpecificIP);
  *     responses:
  *       200:
  *         description: Server is healthy
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Health'
  */
 app.get('/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
 
@@ -377,68 +468,15 @@ app.get('/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().
  *     responses:
  *       200:
  *         description: API info
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Info'
  */
 app.get('/info', (req, res) => res.json({
   version: '3.0.0-merged',
   databases: ['MaxMind', 'IP2Location', 'IP2Proxy'],
   supportedTypes: ['IPv4', 'IPv6']
-}));
-
-/**
- * @openapi
- * /api/ip:
- *   get:
- *     summary: Legacy path for current IP lookup
- *     tags: [Legacy]
- *     responses:
- *       200:
- *         description: Success
- */
-app.get('/api/ip', handleCurrentIP);
-
-/**
- * @openapi
- * /api/ip/{ip}:
- *   get:
- *     summary: Legacy path for specific IP lookup
- *     tags: [Legacy]
- *     parameters:
- *       - in: path
- *         name: ip
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Success
- */
-app.get('/api/ip/:ip', handleSpecificIP);
-
-/**
- * @openapi
- * /api/health:
- *   get:
- *     summary: Legacy health check
- *     tags: [Legacy]
- *     responses:
- *       200:
- *         description: OK
- */
-app.get('/api/health', (req, res) => res.json({ status: 'ok', merged: true }));
-
-/**
- * @openapi
- * /api/attribution:
- *   get:
- *     summary: Legacy attribution info
- *     tags: [Legacy]
- *     responses:
- *       200:
- *         description: Success
- */
-app.get('/api/attribution', (req, res) => res.json({
-  attribution: 'Contains data from MaxMind GeoLite2, IP2Location LITE, and IP2Proxy LITE.',
-  links: ['https://www.maxmind.com', 'https://lite.ip2location.com']
 }));
 
 // --- Start Server ---

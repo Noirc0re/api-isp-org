@@ -218,17 +218,15 @@ function App() {
             </h2>
 
             <p className="api-intro" style={{ marginBottom: '2rem', opacity: 0.8 }}>
-              سرویس RezvanGate از هر دو سبک آدرس‌دهی (جدید و قدیمی) پشتیبانی می‌کند. پاسخ‌ها شامل اطلاعات ادغام شده از چندین پایگاه داده هستند.
+              سرویس RezvanGate یک API پیشرفته برای Geolocation و شناسایی پروکسی است. پاسخ‌ها به فرمت JSON و شامل اطلاعات ادغام شده از پایگاه داده‌های MaxMind و IP2Location هستند.
             </p>
 
             <div className="api-endpoints">
+              {/* Endpoint 1: Current IP */}
               <div className="api-endpoint">
                 <div className="endpoint-header">
                   <span className="method">GET</span>
-                  <div className="endpoint-urls" style={{ display: 'flex', gap: '1rem' }}>
-                    <span className="endpoint-url" dir="ltr">/ip</span>
-                    <span className="endpoint-url" dir="ltr">/api/ip</span>
-                  </div>
+                  <span className="endpoint-url" dir="ltr">/ip</span>
                 </div>
                 <div className="endpoint-body">
                   <p className="endpoint-desc">
@@ -240,13 +238,11 @@ function App() {
                 </div>
               </div>
 
+              {/* Endpoint 2: Specific IP */}
               <div className="api-endpoint">
                 <div className="endpoint-header">
                   <span className="method">GET</span>
-                  <div className="endpoint-urls" style={{ display: 'flex', gap: '1rem' }}>
-                    <span className="endpoint-url" dir="ltr">/ip/:ip</span>
-                    <span className="endpoint-url" dir="ltr">/api/ip/:ip</span>
-                  </div>
+                  <span className="endpoint-url" dir="ltr">/ip/:ip</span>
                 </div>
                 <div className="endpoint-body">
                   <p className="endpoint-desc">
@@ -258,18 +254,60 @@ function App() {
                 </div>
               </div>
 
+              {/* Endpoint 3: Health */}
               <div className="api-endpoint">
                 <div className="endpoint-header">
                   <span className="method">GET</span>
-                  <div className="endpoint-urls" style={{ display: 'flex', gap: '1rem' }}>
-                    <span className="endpoint-url" dir="ltr">/info</span>
-                    <span className="endpoint-url" dir="ltr">/health</span>
-                  </div>
+                  <span className="endpoint-url" dir="ltr">/health</span>
                 </div>
                 <div className="endpoint-body">
                   <p className="endpoint-desc">
-                    اطلاعات سیستم و وضعیت سلامت API را برمی‌گرداند.
+                    بررسی وضعیت سلامت سرویس.
                   </p>
+                </div>
+              </div>
+
+              {/* Endpoint 4: Info */}
+              <div className="api-endpoint">
+                <div className="endpoint-header">
+                  <span className="method">GET</span>
+                  <span className="endpoint-url" dir="ltr">/info</span>
+                </div>
+                <div className="endpoint-body">
+                  <p className="endpoint-desc">
+                    اطلاعات نسخه API و دیتابیس‌های مورد استفاده.
+                  </p>
+                </div>
+              </div>
+
+              {/* Models Section */}
+              <div className="api-endpoint" style={{ border: '1px solid var(--accent-green-glow)' }}>
+                <div className="endpoint-header" style={{ background: 'var(--accent-green-glow)' }}>
+                  <span className="method" style={{ background: 'var(--accent-green)' }}>MODEL</span>
+                  <span className="endpoint-url">ساختار پاسخ (IPInfo)</span>
+                </div>
+                <div className="endpoint-body">
+                  <div className="ip-info-grid" style={{ background: 'transparent', gap: '8px' }}>
+                    {[
+                      { field: 'ip', desc: 'آدرس IP' },
+                      { field: 'ipType', desc: 'نوع (IPv4/IPv6)' },
+                      { field: 'country', desc: 'نام کشور' },
+                      { field: 'countryCode', desc: 'کد کشور (ISO)' },
+                      { field: 'isp', desc: 'ارائه‌دهنده اینترنت' },
+                      { field: 'asn', desc: 'شماره AS' },
+                      { field: 'latitude', desc: 'عرض جغرافیایی' },
+                      { field: 'longitude', desc: 'طول جغرافیایی' },
+                      { field: 'timezone', desc: 'منطقه زمانی' },
+                      { field: 'proxyType', desc: 'نوع پروکسی (در صورت وجود)' },
+                      { field: 'threat', desc: 'سطح تهدید' },
+                      { field: 'source', desc: 'منبع داده‌های استفاده شده' }
+                    ].map(item => (
+                      <div key={item.field} className="info-item" style={{ padding: '0.5rem 1rem', borderRadius: '4px' }}>
+                        <span className="info-label" dir="ltr" style={{ fontSize: '0.85rem' }}>{item.field}</span>
+                        <span className="info-value" style={{ fontSize: '0.85rem' }}>{item.desc}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
@@ -277,28 +315,20 @@ function App() {
               <div className="api-endpoint">
                 <div className="endpoint-header">
                   <span className="method">JSON</span>
-                  <span className="endpoint-url">نمونه پاسخ ادغام شده (واقعی)</span>
+                  <span className="endpoint-url">نمونه پاسخ واقعی</span>
                 </div>
                 <div className="endpoint-body">
-                  <p className="endpoint-desc">
-                    نمونه پاسخ دریافتی از سرور برای آدرس 8.8.8.8 که شامل تمامی فیلدهاست:
-                  </p>
                   <div className="code-block">
                     <pre dir="ltr">{JSON.stringify({
                       "ip": "8.8.8.8",
                       "ipType": "IPv4",
-                      "ipv4": "8.8.8.8",
                       "country": "United States",
                       "countryCode": "US",
-                      "region": "California",
-                      "city": "Mountain View",
+                      "isp": "GOOGLE",
+                      "asn": 15169,
                       "latitude": 37.751,
                       "longitude": -97.822,
                       "timezone": "America/Chicago",
-                      "isp": "GOOGLE",
-                      "organization": "GOOGLE",
-                      "asn": 15169,
-                      "asName": "AS15169 GOOGLE",
                       "source": "MaxMind + AS + IP2Location",
                       "attribution": "Contains data from MaxMind GeoLite2, IP2Location LITE, and IP2Proxy LITE."
                     }, null, 2)}</pre>
