@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 
-const API_BASE = '';
+const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:3001'
+  : '';
 
-// Get current site URL for API documentation
-const getSiteUrl = () => {
-  if (typeof window !== 'undefined') {
-    return window.location.origin;
-  }
-  return 'https://your-domain.com';
+// Get current backend URL for API documentation
+const getBackendUrl = () => {
+  return API_BASE || window.location.origin;
 };
 
 function App() {
@@ -22,7 +21,7 @@ function App() {
     setLoading(true);
     setError(null);
     try {
-      const url = ip ? `${API_BASE}/api/ip/${ip}` : `${API_BASE}/api/ip`;
+      const url = ip ? `${API_BASE}/ip/${ip}` : `${API_BASE}/ip`;
       const response = await fetch(url);
       const data = await response.json();
 
@@ -90,6 +89,15 @@ function App() {
               onClick={(e) => { e.preventDefault(); setActiveTab('api'); }}
             >
               مستندات API
+            </a>
+            <a
+              href={`${getBackendUrl()}/docs`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="nav-link"
+              style={{ color: 'var(--accent-green)' }}
+            >
+              Swagger (OAS)
             </a>
           </nav>
         </div>
@@ -217,9 +225,28 @@ function App() {
               <span>⚡</span> مستندات API
             </h2>
 
-            <p className="api-intro" style={{ marginBottom: '2rem', opacity: 0.8 }}>
+            <p className="api-intro" style={{ marginBottom: '1.5rem', opacity: 0.8 }}>
               سرویس RezvanGate یک API پیشرفته برای Geolocation و شناسایی پروکسی است. پاسخ‌ها به فرمت JSON و شامل اطلاعات ادغام شده از پایگاه داده‌های MaxMind و IP2Location هستند.
             </p>
+
+            <div style={{ marginBottom: '2.5rem', textAlign: 'center' }}>
+              <a
+                href={`${getBackendUrl()}/docs`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="search-btn"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  textDecoration: 'none',
+                  padding: '12px 24px',
+                  fontSize: '1rem'
+                }}
+              >
+                📚 مشاهده مستندات تعاملی Swagger (OpenAPI)
+              </a>
+            </div>
 
             <div className="api-endpoints">
               {/* Endpoint 1: Current IP */}
@@ -233,7 +260,7 @@ function App() {
                     اطلاعات آدرس IP فعلی شما را برمی‌گرداند.
                   </p>
                   <div className="code-block">
-                    <pre dir="ltr">{`curl ${getSiteUrl()}/ip`}</pre>
+                    <pre dir="ltr">{`curl ${getBackendUrl()}/ip`}</pre>
                   </div>
                 </div>
               </div>
@@ -249,7 +276,7 @@ function App() {
                     اطلاعات یک آدرس IP خاص را برمی‌گرداند.
                   </p>
                   <div className="code-block">
-                    <pre dir="ltr">{`curl ${getSiteUrl()}/ip/8.8.8.8`}</pre>
+                    <pre dir="ltr">{`curl ${getBackendUrl()}/ip/8.8.8.8`}</pre>
                   </div>
                 </div>
               </div>
